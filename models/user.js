@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const REQUIRED_STRING = { type: String, required: true }
 
 const UserSchema = new Schema({
-	email: { ...REQUIRED_STRING },
+	email: { ...REQUIRED_STRING, unique: true },
 	password: { ...REQUIRED_STRING },
 	role: { type: Schema.Types.ObjectId, ref: 'roles' },
 })

@@ -1,6 +1,7 @@
 require('dotenv/config')
 const express = require('express')
 const mongoose = require('mongoose')
+const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
@@ -11,6 +12,8 @@ const authRouter = require('./routes/auth.routes')
 const setupRouter = require('./routes/setup.routes')
 const serviceRouter = require('./routes/services.routes')
 const quoteRouter = require('./routes/quotes.routes')
+
+app.use(morgan('dev'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
