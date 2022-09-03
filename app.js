@@ -5,8 +5,6 @@ const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 
-const { auth } = require('./middlewares/auth')
-
 const indexRouter = require('./routes/index.routes')
 const authRouter = require('./routes/auth.routes')
 const setupRouter = require('./routes/setup.routes')
@@ -17,7 +15,7 @@ app.use(morgan('dev'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors(['*', 'https://interpro-consultant.web.app/']))
+app.use(cors([process.env.FRONTEND_URL || '*']))
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)

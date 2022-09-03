@@ -1,6 +1,8 @@
+const { JSONResponse } = require('../helper')
+
 const Service = require('../models/services')
 const Role = require('../models/roles')
-const { JSONResponse } = require('../helper')
+const User = require('../models/user')
 
 class SetupController {
 	static setupServices = async (req, res) => {
@@ -36,14 +38,21 @@ class SetupController {
 
 		try {
 			const superUser = await User.create({
-				username: 'roshane',
+				email: 'roshane@mail.com',
 				password: bcryptHashedPassword,
 				role: '6313870b4454b0bfd6027bdf',
 			})
 
+			superUser.populate('role')
+
 			return JSONResponse.success(res, 'admin created!', superUser)
 		} catch (error) {
-			JSONResponse.error(res, undefined, error)
+			const duplicateEntryCode = 11000
+
+			if (error.code == duplicateEntryCode)
+				return JSONResponse.error(res, 'duplicate entry found', {})
+
+			return JSONResponse.error(res, 'failed to create admin', error)
 		}
 	}
 }
