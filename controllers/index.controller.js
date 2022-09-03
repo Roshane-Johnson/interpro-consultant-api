@@ -2,7 +2,7 @@ class IndexController {
 	static index = (req, res) => {
 		res.json({
 			message: 'InterPro Consultant 👋',
-			version: 'v0.1.0',
+			version: 'v0.2.0',
 			question: 'What brought you to this page?',
 			proTip: 'Send a POST request for a suprise',
 		})

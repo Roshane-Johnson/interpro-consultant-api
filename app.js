@@ -14,7 +14,7 @@ const quoteRouter = require('./routes/quotes.routes')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors(['*', 'http://localhost:4200/']))
+app.use(cors(['*', 'https://interpro-consultant.web.app/']))
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
