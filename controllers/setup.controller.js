@@ -29,6 +29,23 @@ class SetupController {
 			return JSONResponse.error(res, undefined, err)
 		}
 	}
+
+	static setupAdmin = async (req, res) => {
+		const bcryptHashedPassword =
+			'$2a$10$oCmBZWMkWH2/vl2FImr8h.A2qn05YGQRvFkpfZR8boclO6OnzNPL2' //password
+
+		try {
+			const superUser = await User.create({
+				username: 'roshane',
+				password: bcryptHashedPassword,
+				role: '6313870b4454b0bfd6027bdf',
+			})
+
+			return JSONResponse.success(res, 'admin created!', superUser)
+		} catch (error) {
+			JSONResponse.error(res, undefined, error)
+		}
+	}
 }
 
 module.exports = SetupController

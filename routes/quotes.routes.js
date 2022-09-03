@@ -9,7 +9,7 @@ const {
 } = require('../controllers/quotes.controller')
 const { auth } = require('../middlewares/auth')
 
-router.route('/').get(getAll).post(auth, createOne)
+router.route('/').get(auth, getAll).post(createOne)
 router.route('/:id').get(getOne).patch(auth, updateOne).delete(auth, deleteOne)
 
 module.exports = router
