@@ -1,5 +1,5 @@
 const Quotes = require('../models/quotes')
-const { JSONResponse } = require('../helper')
+const { JSONResponse } = require('../lib/helper')
 
 class QuoteController {
 	static createOne = async (req, res) => {

@@ -1,7 +1,8 @@
 const express = require('express')
-const router = express.Router()
-const IndexController = require('../controllers/index.controller')
+const { index, answer } = require('../controllers/index.controller')
 
-router.route('/').get(IndexController.index).post(IndexController.indexAnswer)
+const router = express.Router()
+
+router.route('/').get(index).post(answer)
 
 module.exports = router

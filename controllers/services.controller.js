@@ -1,5 +1,5 @@
 const Service = require('../models/services')
-const { JSONResponse } = require('../helper')
+const { JSONResponse } = require('../lib/helper')
 
 class ServiceController {
 	static createOne = async (req, res) => {

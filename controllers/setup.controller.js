@@ -1,4 +1,4 @@
-const { JSONResponse } = require('../helper')
+const { JSONResponse } = require('../lib/helper')
 
 const Service = require('../models/services')
 const Role = require('../models/roles')
@@ -49,7 +49,7 @@ class SetupController {
 			const duplicateEntryCode = 11000
 
 			if (error.code == duplicateEntryCode)
-				return JSONResponse.error(res, 'duplicate entry found', {})
+				return JSONResponse.error(res, 'duplicate entry found', null)
 
 			return JSONResponse.error(res, 'failed to create admin', error)
 		}
