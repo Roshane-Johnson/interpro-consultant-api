@@ -40,10 +40,9 @@ class SetupController {
 			const superUser = await User.create({
 				email: 'roshane@mail.com',
 				password: bcryptHashedPassword,
-				role: '6313870b4454b0bfd6027bdf',
+				// role: '6313870b4454b0bfd6027bdf', //production roleId
+				role: '63102e20a8cb528820cff2be', //local roleId
 			})
-
-			superUser.populate('role')
 
 			return JSONResponse.success(res, 'admin created!', superUser)
 		} catch (error) {

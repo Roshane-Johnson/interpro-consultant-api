@@ -1,9 +1,10 @@
 require('dotenv/config')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
 
-const { generateAccessToken } = require('../helper')
+const { generateAccessToken, JSONResponse } = require('../helper')
 
 class AuthController {
 	static login = async (req, res, next) => {
@@ -52,19 +53,21 @@ class AuthController {
 	static getAuthUser = async (req, res) => {
 		const authHeader = req.headers['authorization']
 		const token = authHeader && authHeader.split(' ')[1]
+		let authUser = new User()
 
-		if (token == null) return res.sendStatus(401)
+		if (token == null) return res.sendStatus(401) //401 - unauthorized
 
-		jwt.verify(
-			token,
-			process.env.SECRET_JWT_TOKEN,
-			{ expiresIn: '1d' },
-			(err, user) => {
-				if (err) return res.sendStatus(403)
-				req.user = user
-				next()
-			}
-		)
+		const { _id } = jwt.decode(token) //decode token
+
+		try {
+			authUser = await User.findById(_id).select('_id email role').populate('role') //populate auth user
+
+			if (authUser && authUser.role == null) authUser.depopulate('role') //depopulate if populated field is null
+
+			return JSONResponse.success(res, undefined, authUser)
+		} catch (error) {
+			return JSONResponse.error(res, 'error finding auth user', error, 404)
+		}
 	}
 }
 

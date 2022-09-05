@@ -23,7 +23,7 @@ class QuoteController {
 	static getOne = async (req, res) => {
 		try {
 			const quote = await Quotes.findById(req.params.id).populate('service')
-			return JSONResponse.success(res, 'sucess', quote)
+			return JSONResponse.success(res, 'success', quote)
 		} catch (err) {
 			return JSONResponse.error(res, undefined, err)
 		}
