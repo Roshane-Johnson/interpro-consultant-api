@@ -6,10 +6,14 @@ const cors = require('cors')
 const app = express()
 
 const MONGODB_URI =
-	process.env.PROD == true ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI
+	process.env.NODE_ENV == 'production'
+		? process.env.MONGODB_URI_PROD
+		: process.env.MONGODB_URI
 
 const FRONTEND_URL =
-	process.env.PROD == true ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL
+	process.env.NODE_ENV == 'production'
+		? process.env.FRONTEND_URL_PROD
+		: process.env.FRONTEND_URL
 
 const indexRouter = require('./routes/index.routes')
 const authRouter = require('./routes/auth.routes')
