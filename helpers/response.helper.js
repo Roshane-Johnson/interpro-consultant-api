@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken')
-
 class JSONResponse {
 	static success(res, message = 'success', data, status) {
 		res.status(status ?? res.statusCode).json({
@@ -11,8 +9,8 @@ class JSONResponse {
 	}
 
 	static error(res, message = 'error', error, status) {
-		res.status(status ?? res.statusCode).json({
-			status: status ?? res.statusCode,
+		res.status(status ?? 500).json({
+			status: status ?? 500,
 			success: false,
 			message,
 			error,
@@ -20,8 +18,4 @@ class JSONResponse {
 	}
 }
 
-function generateAccessToken(id) {
-	return jwt.sign(id, process.env.SECRET_JWT_TOKEN, { expiresIn: '1d' })
-}
-
-module.exports = { JSONResponse, generateAccessToken }
+module.exports = JSONResponse

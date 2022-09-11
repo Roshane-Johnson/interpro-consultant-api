@@ -1,11 +1,11 @@
-const Quotes = require('../models/quotes')
-const { JSONResponse } = require('../lib/helper')
+const Quote = require('../models/quote')
+const JSONResponse = require('../helpers/response.helper')
 
 class QuoteController {
 	static createOne = async (req, res) => {
 		try {
-			const quote = await Quotes.create(req.body)
-			return JSONResponse.success(res, undefined, quote)
+			const quote = await Quote.create(req.body)
+			return JSONResponse.success(res, undefined, quote, 201)
 		} catch (err) {
 			return JSONResponse.error(res, undefined, err)
 		}
@@ -13,7 +13,7 @@ class QuoteController {
 
 	static getAll = async (req, res) => {
 		try {
-			const quotes = await Quotes.find().populate('service')
+			const quotes = await Quote.find().populate('service')
 			return JSONResponse.success(res, undefined, quotes)
 		} catch (err) {
 			return JSONResponse.error(res, undefined, err)
@@ -21,34 +21,43 @@ class QuoteController {
 	}
 
 	static getOne = async (req, res) => {
-		try {
-			const quote = await Quotes.findById(req.params.id).populate('service')
-			return JSONResponse.success(res, 'success', quote)
-		} catch (err) {
-			return JSONResponse.error(res, undefined, err)
-		}
+		const quote = await Quote.findOne({ id: req.params.id })
+			.populate('service')
+			.catch((error) => {
+				console.log(error)
+				return JSONResponse.error(res, undefined, error)
+			})
+
+		return JSONResponse.success(res, 'quote found', quote)
 	}
 
 	static updateOne = async (req, res) => {
 		const id = req.params.id
 
-		try {
-			const updatedDoc = await Quotes.findByIdAndUpdate(id, req.body, {
-				new: true,
-			})
-			return JSONResponse.success(res, undefined, updatedDoc)
-		} catch (err) {
-			return JSONResponse.error(res, undefined, err)
-		}
+		const updatedDoc = await Quote.findByIdAndUpdate(id, req.body, {
+			new: true,
+		}).catch((error) => {
+			return JSONResponse.error(res, 'error finding and updating document', error)
+		})
+
+		return JSONResponse.success(res, undefined, updatedDoc)
 	}
 
 	static deleteOne = async (req, res) => {
 		const id = req.params.id
-		try {
-			const deletedDoc = await Quotes.findByIdAndDelete(id)
-			return JSONResponse.success(res, undefined, deletedDoc)
-		} catch (err) {
-			return JSONResponse.error(res, undefined, err)
+
+		const document = await Quote.findById(id).catch((error) => {
+			return JSONResponse.error(res, 'error finding quote', error)
+		})
+
+		if (document == null) {
+			return JSONResponse.error(res, "can't find document with id " + id, null)
+		} else {
+			await document.delete().catch((error) => {
+				return JSONResponse.error(res, 'error deleting resource' + id, error)
+			})
+
+			return JSONResponse.success(res, 'resource deleted', document)
 		}
 	}
 }

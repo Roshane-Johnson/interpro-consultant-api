@@ -1,9 +1,14 @@
-const Service = require('../models/services')
-const { JSONResponse } = require('../lib/helper')
+const Service = require('../models/service')
+const JSONResponse = require('../helpers/response.helper')
 
 class ServiceController {
 	static createOne = async (req, res) => {
-		const service = await Service.create(req.body)
+		try {
+			const service = await Service.create(req.body)
+			return JSONResponse.success(res, 'service created!', service, 201)
+		} catch (err) {
+			return JSONResponse.error(res, 'error creating services', err)
+		}
 	}
 
 	static getAll = async (req, res) => {

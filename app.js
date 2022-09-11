@@ -2,35 +2,42 @@ require('dotenv/config')
 const express = require('express')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
+const expressRoutes = require('express-list-routes')
 const cors = require('cors')
 const app = express()
 
-const MONGODB_URI =
-	process.env.NODE_ENV == 'production'
-		? process.env.MONGODB_URI_PROD
-		: process.env.MONGODB_URI
+const PRODUCTION = process.env.NODE_ENV == 'production'
 
-const FRONTEND_URL =
-	process.env.NODE_ENV == 'production'
-		? process.env.FRONTEND_URL_PROD
-		: process.env.FRONTEND_URL
+const MONGODB_URI = PRODUCTION ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI
+const FRONTEND_URL = PRODUCTION ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL
 
 const indexRouter = require('./routes/index.routes')
 const authRouter = require('./routes/auth.routes')
 const setupRouter = require('./routes/setup.routes')
 const serviceRouter = require('./routes/services.routes')
 const quoteRouter = require('./routes/quotes.routes')
+const adminNoteRouter = require('./routes/admin-notes.routes')
+const messageRouter = require('./routes/messages.routes')
+const messageLogRouter = require('./routes/message-logs.routes')
 
-app.use(morgan('dev'))
+if (!PRODUCTION) app.use(morgan('dev'))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors([FRONTEND_URL]))
 
-app.use('/', indexRouter)
-app.use('/auth', authRouter)
-app.use('/setup', setupRouter)
-app.use('/services', serviceRouter)
-app.use('/quotes', quoteRouter)
+const API_VERSION = '/api/v1'
+
+app.use(API_VERSION + '/', indexRouter)
+app.use(API_VERSION + '/auth', authRouter)
+app.use(API_VERSION + '/setup', setupRouter)
+app.use(API_VERSION + '/services', serviceRouter)
+app.use(API_VERSION + '/quotes', quoteRouter)
+app.use(API_VERSION + '/messages', messageRouter)
+app.use(API_VERSION + '/message-logs', messageLogRouter)
+app.use(API_VERSION + '/admin/note', adminNoteRouter)
+
+// expressRoutes(app, { prefix: '/api/v1' })
 
 mongoose.connect(MONGODB_URI, (err) => {
 	const PORT = process.env.PORT || 3000

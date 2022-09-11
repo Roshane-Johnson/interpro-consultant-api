@@ -1,7 +1,7 @@
-const { JSONResponse } = require('../lib/helper')
+const JSONResponse = require('../helpers/response.helper')
 
-const Service = require('../models/services')
-const Role = require('../models/roles')
+const Service = require('../models/service')
+const Role = require('../models/role')
 const User = require('../models/user')
 
 class SetupController {
@@ -22,7 +22,7 @@ class SetupController {
 	}
 
 	static setupRoles = async (req, res) => {
-		const roles = [{ type: 'user' }, { type: 'admin' }]
+		const roles = [{ type: 'admin' }, { type: 'user' }]
 
 		try {
 			const insertedDocs = await Role.insertMany(roles)
@@ -33,26 +33,38 @@ class SetupController {
 	}
 
 	static setupAdmin = async (req, res) => {
-		const bcryptHashedPassword =
-			'$2a$10$oCmBZWMkWH2/vl2FImr8h.A2qn05YGQRvFkpfZR8boclO6OnzNPL2' //password
+		let adminRoleID
 
-		try {
-			const superUser = await User.create({
-				email: 'roshane@mail.com',
-				password: bcryptHashedPassword,
-				// role: '6313870b4454b0bfd6027bdf', //production roleId
-				role: '63102e20a8cb528820cff2be', //local roleId
-			})
+		const roles = await Role.find().catch((error) =>
+			JSONResponse.error(res, 'unable to find roles', error)
+		)
 
-			return JSONResponse.success(res, 'admin created!', superUser)
-		} catch (error) {
-			const duplicateEntryCode = 11000
+		// no roles are in the database
+		if (roles.length <= 0) {
+			console.log('No roles found creating one now...')
 
-			if (error.code == duplicateEntryCode)
-				return JSONResponse.error(res, 'duplicate entry found', null)
+			const createdRole = await Role.create({ type: 'admin' }).catch(
+				JSONResponse.error(res, 'unable to create admin role', error)
+			)
 
-			return JSONResponse.error(res, 'failed to create admin', error)
+			adminRoleID = createdRole.id
+		} else {
+			const adminRole = roles.filter((role) => role.type == 'admin')[0]
+			if (adminRole) adminRoleID = adminRole.id
 		}
+
+		const superUser = await User.create({
+			email: 'xyz@mail.com',
+			password: 'p@$$w0rd',
+			role: '63102e20a8cb528820cff2be',
+		}).catch((error) => console.log(error))
+
+		// JSONResponse.success(res, 'admin created!', superUser)
+
+		// const duplicateEntryCode = 11000
+
+		// if (error.code == duplicateEntryCode)
+		// 	return JSONResponse.error(res, 'duplicate entry found', null)
 	}
 }
 

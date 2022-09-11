@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
-const { generateAccessToken, JSONResponse } = require('../lib/helper')
+const JSONResponse = require('../helpers/response.helper')
+const { generateAccessToken } = require('../helpers/misc.helper')
 
 const User = require('../models/user')
 
@@ -9,30 +10,37 @@ class AuthController {
 		let existingUser
 		let token
 
-		const unknownError = 'error! something went wrong.'
+		const unknownError = 'error! something went wrong on our end.'
 
-		try {
-			existingUser = await User.findOne({ email: email }).populate('role')
-		} catch (error) {
-			return JSONResponse.error(res, unknownError, error)
+		existingUser = await User.findOne({ email: email })
+			.populate('role')
+			.catch((error) => {
+				return JSONResponse.error(res, unknownError, error)
+			})
+
+		if (!existingUser) {
+			return JSONResponse.error(res, "we couldn't find your account", null)
 		}
 
-		if (!existingUser || !bcrypt.compareSync(password, existingUser.password)) {
-			return JSONResponse.error(res, 'invalid credentials', error)
-		}
+		const isValidLogin = bcrypt.compareSync(password, existingUser.password)
 
-		try {
+		if (isValidLogin === false) {
+			return JSONResponse.error(res, 'invalid credentials', null)
+		} else {
 			token = generateAccessToken({
 				_id: existingUser.id,
 			})
-		} catch (error) {
-			return JSONResponse.error(res, unknownError, error)
+
+			//remove password before returning the response
+			const _existingUser = existingUser.toObject()
+			delete _existingUser.password
+
+			return JSONResponse.success(res, 'login successful', {
+				token,
+				user: _existingUser,
+			})
 		}
-
-		return JSONResponse.success(res, 'login successful', { token, user: existingUser })
 	}
-
-	static signUp = async (req, res) => {}
 
 	static getAuthUser = async (req, res) => {
 		const { _id } = req.user //deconstruct authenticated user's id
