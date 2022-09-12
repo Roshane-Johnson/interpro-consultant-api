@@ -6,7 +6,7 @@ const expressRoutes = require('express-list-routes')
 const cors = require('cors')
 const app = express()
 
-const PRODUCTION = process.env.NODE_ENV == 'development'
+const PRODUCTION = process.env.NODE_ENV == 'production'
 
 const MONGODB_URI = PRODUCTION ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI
 const FRONTEND_URL = PRODUCTION ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL
