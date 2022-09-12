@@ -6,7 +6,7 @@ const expressRoutes = require('express-list-routes')
 const cors = require('cors')
 const app = express()
 
-const PRODUCTION = process.env.NODE_ENV == 'production'
+const PRODUCTION = process.env.NODE_ENV == 'development'
 
 const MONGODB_URI = PRODUCTION ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI
 const FRONTEND_URL = PRODUCTION ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL
@@ -21,7 +21,6 @@ const messageRouter = require('./routes/messages.routes')
 const messageLogRouter = require('./routes/message-logs.routes')
 
 if (!PRODUCTION) app.use(morgan('dev'))
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors([FRONTEND_URL]))
@@ -37,8 +36,6 @@ app.use(API_VERSION + '/messages', messageRouter)
 app.use(API_VERSION + '/message-logs', messageLogRouter)
 app.use(API_VERSION + '/admin/note', adminNoteRouter)
 
-// expressRoutes(app, { prefix: '/api/v1' })
-
 mongoose.connect(MONGODB_URI, (err) => {
 	const PORT = process.env.PORT || 3000
 
@@ -46,7 +43,7 @@ mongoose.connect(MONGODB_URI, (err) => {
 
 	console.log('MongoDB Connected!')
 
-	app.listen(PORT, () => {
+	app.listen(PORT, function () {
 		console.log(`Server listening on http://localhost:${PORT}`)
 	})
 })

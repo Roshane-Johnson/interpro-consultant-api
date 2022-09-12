@@ -4,9 +4,9 @@ const Schema = mongoose.Schema
 
 const UserSchema = new Schema(
 	{
-		email: { type: String, required: [true, 'error'], unique: true },
-		password: { type: String, required: [true, 'error'] },
-		role: { type: Schema.Types.ObjectId, ref: 'roles' },
+		email: { type: String, required: [true, 'email is a required field'], unique: true },
+		password: { type: String, required: [true, 'password is a required field'] },
+		role: { type: Schema.Types.ObjectId, ref: 'roles', required: [true, 'role id is a required field'] },
 	},
 	{ timestamps: true, collection: 'users' }
 )
@@ -23,7 +23,7 @@ UserSchema.pre('save', async function (next) {
 
 		next()
 	} else {
-		throw new Error('Fatal error while running pre -> save model middleware')
+		throw new Error('fatal error while running `users` pre save model middleware')
 	}
 })
 

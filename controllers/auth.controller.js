@@ -1,11 +1,19 @@
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const { request, response } = require('express')
 const JSONResponse = require('../helpers/response.helper')
 const { generateAccessToken } = require('../helpers/misc.helper')
+const nodemailer = require('nodemailer')
 
 const User = require('../models/user')
 
 class AuthController {
-	static login = async (req, res, next) => {
+	/**
+	 * Login User
+	 * @param {request} req
+	 * @param {response} res
+	 */
+	static login = async (req, res) => {
 		let { email, password } = req.body
 		let existingUser
 		let token
@@ -42,6 +50,11 @@ class AuthController {
 		}
 	}
 
+	/**
+	 * Get Authenticated User
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static getAuthUser = async (req, res) => {
 		const { _id } = req.user //deconstruct authenticated user's id
 
@@ -56,6 +69,25 @@ class AuthController {
 		} catch (error) {
 			return JSONResponse.error(res, 'error finding auth user', error, 404)
 		}
+	}
+
+	/**
+	 * Get Token Info
+	 * @param {request} req
+	 * @param {response} res
+	 */
+	static decodeToken = async (req, res) => {
+		const token = req.headers.authorization && req.headers.authorization.split(' ')[1]
+
+		// token not found
+		if (!token) return JSONResponse.error(res, 'token not found', null, 404)
+
+		const decodedToken = jwt.decode(token, { complete: true, json: true })
+
+		if (decodedToken == null)
+			return JSONResponse.error(res, 'this token might be invalid', null, 500)
+
+		return JSONResponse.success(res, 'token decoded', decodedToken.payload)
 	}
 }
 

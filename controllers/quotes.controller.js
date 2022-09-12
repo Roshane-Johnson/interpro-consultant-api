@@ -1,7 +1,13 @@
 const Quote = require('../models/quote')
+const { request, response } = require('express')
 const JSONResponse = require('../helpers/response.helper')
 
 class QuoteController {
+	/**
+	 * Create one resource
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static createOne = async (req, res) => {
 		try {
 			const quote = await Quote.create(req.body)
@@ -11,6 +17,11 @@ class QuoteController {
 		}
 	}
 
+	/**
+	 * Get all resources
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static getAll = async (req, res) => {
 		try {
 			const quotes = await Quote.find().populate('service')
@@ -20,6 +31,11 @@ class QuoteController {
 		}
 	}
 
+	/**
+	 * Get one resource
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static getOne = async (req, res) => {
 		const quote = await Quote.findOne({ id: req.params.id })
 			.populate('service')
@@ -31,6 +47,11 @@ class QuoteController {
 		return JSONResponse.success(res, 'quote found', quote)
 	}
 
+	/**
+	 * Update one resource
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static updateOne = async (req, res) => {
 		const id = req.params.id
 
@@ -43,6 +64,11 @@ class QuoteController {
 		return JSONResponse.success(res, undefined, updatedDoc)
 	}
 
+	/**
+	 * Delete one resource
+	 * @param {request} req
+	 * @param {response} res
+	 */
 	static deleteOne = async (req, res) => {
 		const id = req.params.id
 

@@ -7,17 +7,17 @@ const MessageLog = require('./message-log')
 
 const QuoteSchema = new Schema(
 	{
-		fullName: { type: String, required: true },
-		email: { type: String, required: true },
+		fullName: { type: String, required: [true, 'fullNAme is a required field'] },
+		email: { type: String, required: [true, 'email is a required field'] },
 		phoneNumber: { type: Number },
 		service: {
 			type: Schema.Types.ObjectId,
 			ref: 'services',
-			required: [true, 'a service id is required'],
+			required: [true, 'service is a required field'],
 		},
 		company: { type: String },
 		budget: { type: Number },
-		message: { type: String, required: true },
+		message: { type: String, required: [true, 'message is a required field'] },
 		status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 	},
 	{ timestamps: true, collection: 'quotes' }
@@ -76,7 +76,8 @@ QuoteSchema.post('save', async (savedDocument, next) => {
 		},
 		data: body,
 	}).catch(({ response: resp }) => {
-		console.log('Error has value', resp.data.error || resp.data || resp) //works from left to right, then prints the first value that's not UN-DEFINED
+		//works from left to right, then prints the first value that's not UN-DEFINED
+		console.log('Error has value', resp.data.error || resp.data || resp) 
 		console.log('error! sending message to WhatsApp!')
 		next()
 	})
