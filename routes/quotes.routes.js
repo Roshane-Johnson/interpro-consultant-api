@@ -10,6 +10,6 @@ const {
 const { auth } = require('../middlewares/auth')
 
 router.route('/').get(auth, getAll).post(createOne)
-router.route('/:id').get(getOne).patch(auth, updateOne).delete(auth, deleteOne)
+router.route('/:id').get(auth, getOne).patch(auth, updateOne).delete(auth, deleteOne)
 
 module.exports = router
