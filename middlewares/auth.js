@@ -6,7 +6,7 @@ function auth(req, res, next) {
 
 	if (token == null) return res.sendStatus(401)
 
-	jwt.verify(token, process.env.SECRET_JWT_TOKEN, { expiresIn: '1d' }, (err, user) => {
+	jwt.verify(token, process.env.SECRET_JWT_TOKEN, (err, user) => {
 		if (err) return res.sendStatus(403)
 		req.user = user
 		next()
