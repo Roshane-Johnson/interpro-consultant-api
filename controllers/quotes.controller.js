@@ -37,12 +37,13 @@ class QuoteController {
 	 * @param {response} res
 	 */
 	static getOne = async (req, res) => {
-		const quote = await Quote.findOne({ id: req.params.id })
-			.populate('service')
-			.catch((error) => {
-				console.log(error)
-				return JSONResponse.error(res, undefined, error)
-			})
+		let quote
+		try {
+			quote = await Quote.findOne({ _id: req.params.id }).populate('service')
+		} catch (error) {
+			console.log(error)
+			return JSONResponse.error(res, undefined, error)
+		}
 
 		return JSONResponse.success(res, 'quote found', quote)
 	}

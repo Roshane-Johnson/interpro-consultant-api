@@ -45,9 +45,13 @@ class MessageController {
 	static deleteOne = async (req, res) => {
 		const id = req.params.id
 
-		const document = await Message.findById(id).catch((error) => {
+		let document
+
+		try {
+			document = await Message.findById(id)
+		} catch (error) {
 			return JSONResponse.error(res, 'error finding resource', error)
-		})
+		}
 
 		if (document == null) {
 			return JSONResponse.error(res, "can't find document with id " + id, null)

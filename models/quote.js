@@ -17,6 +17,11 @@ const QuoteSchema = new Schema(
 		},
 		company: { type: String },
 		budget: { type: Number },
+		priority: {
+			type: String,
+			enum: ['low', 'normal', 'high', 'urgent'],
+			default: 'normal',
+		},
 		message: { type: String, required: [true, 'message is a required field'] },
 		status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 	},
@@ -77,7 +82,7 @@ QuoteSchema.post('save', async (savedDocument, next) => {
 		data: body,
 	}).catch(({ response: resp }) => {
 		//works from left to right, then prints the first value that's not UN-DEFINED
-		console.log('Error has value', resp.data.error || resp.data || resp) 
+		console.log('Error has value', resp.data.error || resp.data || resp)
 		console.log('error! sending message to WhatsApp!')
 		next()
 	})
