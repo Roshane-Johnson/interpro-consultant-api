@@ -23,8 +23,8 @@ MessageSchema.post('save', async (document) => {
 			port: 465,
 			secure: true, // true for 465, false for other ports
 			auth: {
-				user: process.env.EMAIL_USERAME, //'gp2000101@gmail.com'
-				pass: process.env.EMAIL_PASSWORD, //'agbxpkteoapwajed'
+				user: process.env.EMAIL_USERNAME, 
+				pass: process.env.EMAIL_PASSWORD,
 			},
 		})
 
