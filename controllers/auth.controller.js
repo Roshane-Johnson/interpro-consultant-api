@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { request, response } = require('express')
 const JSONResponse = require('../helpers/response.helper')
@@ -27,13 +27,13 @@ class AuthController {
 			})
 
 		if (!existingUser) {
-			return JSONResponse.error(res, "we couldn't find your account", null)
+			return JSONResponse.error(res, "we couldn't find your account", null, 404)
 		}
 
 		const isValidLogin = bcrypt.compareSync(password, existingUser.password)
 
 		if (isValidLogin === false) {
-			return JSONResponse.error(res, 'invalid credentials', null)
+			return JSONResponse.error(res, 'invalid credentials', null, 401)
 		} else {
 			token = generateAccessToken({
 				_id: existingUser.id,
